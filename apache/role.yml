@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: apache                  # Role apache namespace level par chalega
+  name: apache-manager               # Role which we need to create            
+
+rules:
+- apiGroups: [""]                    # Core API group
+  resources: ["pods", "services"]
+  verbs: ["get", "watch", "list", "delete", "create", "patch"]
+
+- apiGroups: ["apps"]                # Apps API group
+  resources: ["deployments"]
+  verbs: ["get", "watch", "list", "delete", "create", "patch"]
+
+- apiGroups: ["batch"]               # Batch API group (optional)
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "watch", "list", "delete", "create"]
+
+- apiGroups: ["rbac.authorization.k8s.io"]   # RBAC API group (limited)
+  resources: ["roles", "rolebindings"]
+  verbs: ["get", "list"]

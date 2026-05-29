@@ -16,28 +16,35 @@ spec:
         app: mysql
     spec:
       containers:
-      - name: mysql
-        image: mysql:8.0.45
-        ports:
-        - containerPort: 3306
+        - name: mysql
+          image: mysql:8.0.45
+          ports:
+            - containerPort: 3306
 
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "root"
-        - name: MYSQL_DATABASE
-          value: "devops"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
 
-        volumeMounts:
-        - name: mysql-data
-          mountPath: /var/lib/mysql
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config-map
+                  key: MYSQL_DATABASE
+
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
 
   volumeClaimTemplates:
-  - metadata:
-      name: mysql-data
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      storageClassName: local-path
-      resources:
-        requests:
-          storage: 1Gi
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 1Gi
